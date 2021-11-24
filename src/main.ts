@@ -9,7 +9,7 @@ import {
   ElForm,
   ElFormItem,
   ElRadio
-} from 'element-plus'
+} from 'element-plus/lib/components'
 const components = [ElButton, ElForm, ElFormItem, ElRadio]
 
 import App from './App.vue'
