@@ -82,32 +82,48 @@ class MYRequest {
   //   })
   // }
   // 3.每个单独的请求也可以有属于自己的拦截
-  request(config: MYRequestConfig): void {
-    // console.log(config)
+  request<T>(config: MYRequestConfig): Promise<T> {
+    return new Promise((resolve, reject) => {
+      if (config.interceptors?.requestInterceptor) {
+        config = config.interceptors.requestInterceptor(config)
+      }
+      if (config.showLoading === false) {
+        this.showLoading = config.showLoading
+      }
 
-    if (config.interceptors?.requestInterceptor) {
-      config = config.interceptors.requestInterceptor(config)
-    }
-    if (config.showLoading === false) {
-      this.showLoading = config.showLoading
-    }
+      // console.log(config)
 
-    // console.log(config)
+      this.instance
+        .request<any, T>(config)
+        .then((res) => {
+          // 1.单个请求对数据的处理
+          if (config.interceptors?.responseInterceptor) {
+            res = config.interceptors.responseInterceptor(res)
+          }
+          // console.log(res)
+          resolve(res)
+          // 2.将showloading设置为true，不影响下一个请求
+          this.showLoading = DEFAULT_LOADING
+        })
+        .catch((err) => {
+          this.showLoading = DEFAULT_LOADING
+          reject(err)
+          return err
+        })
+    })
+  }
 
-    this.instance
-      .request(config)
-      .then((res) => {
-        if (config.interceptors?.responseInterceptor) {
-          res = config.interceptors.responseInterceptor(res)
-        }
-        console.log(res)
-        // 将showloading设置为true，不影响下一个请求
-        this.showLoading = DEFAULT_LOADING
-      })
-      .catch((err) => {
-        this.showLoading = DEFAULT_LOADING
-        return err
-      })
+  get<T>(config: MYRequestConfig): Promise<T> {
+    return this.request<T>({ ...config, method: 'GET' })
+  }
+  post<T>(config: MYRequestConfig): Promise<T> {
+    return this.request<T>({ ...config, method: 'POST' })
+  }
+  delete<T>(config: MYRequestConfig): Promise<T> {
+    return this.request<T>({ ...config, method: 'DELETE' })
+  }
+  patch<T>(config: MYRequestConfig): Promise<T> {
+    return this.request<T>({ ...config, method: 'PATCH' })
   }
 }
 

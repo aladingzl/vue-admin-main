@@ -5,7 +5,9 @@ export interface MYRequestInterceptors {
 
   requestInterceptorCatch?: (error: any) => any
 
-  responseInterceptor?: (res: AxiosResponse) => AxiosResponse
+  // responseInterceptor?: (res: AxiosResponse) => AxiosResponse
+
+  responseInterceptor?: (res: any) => any
 
   responseInterceptorCatch?: (error: any) => any
 }
