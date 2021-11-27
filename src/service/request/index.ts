@@ -1,19 +1,8 @@
-import axios, { AxiosResponse } from 'axios'
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios from 'axios'
+import type { AxiosInstance } from 'axios'
+import type { MYRequestConfig, MYRequestInterceptors } from './type'
 // 类的封装性更强
-interface MYRequestInterceptors {
-  requestInterceptor?: (config: AxiosRequestConfig) => AxiosRequestConfig
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  requestInterceptorCatch?: (error: any) => any
 
-  responseInterceptor?: (res: AxiosResponse) => AxiosRequestConfig
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  responseInterceptorCatch?: (error: any) => any
-}
-
-interface MYRequestConfig extends AxiosRequestConfig {
-  interceptors?: MYRequestInterceptors
-}
 class MYRequest {
   instance: AxiosInstance
   interceptors?: MYRequestInterceptors
@@ -21,7 +10,7 @@ class MYRequest {
   constructor(config: MYRequestConfig) {
     this.instance = axios.create(config)
     this.interceptors = config.interceptors
-
+    //1. 实例
     this.instance.interceptors.request.use(
       this.interceptors?.requestInterceptor,
       this.interceptors?.requestInterceptorCatch
@@ -31,10 +20,52 @@ class MYRequest {
       this.interceptors?.responseInterceptor,
       this.interceptors?.responseInterceptorCatch
     )
+    // 2.全局 添加所有的实例都有的拦截器
+    // 请求 后添加的先请求
+    // 响应 先添加的  先响应
+    this.instance.interceptors.request.use(
+      (config) => {
+        console.log('所有的实例都有的拦截器：请求拦截成功')
+        return config
+      },
+      (err) => {
+        console.log('所有的实例都有的拦截器：请求拦截失败')
+        return err
+      }
+    )
+
+    this.instance.interceptors.response.use(
+      (res) => {
+        console.log('所有的实例都有的拦截器：响应拦截成功')
+        return res
+      },
+      (err) => {
+        console.log('所有的实例都有的拦截器：响应拦截失败')
+        return err
+      }
+    )
   }
 
-  request(config: AxiosRequestConfig): void {
+  // request(config: AxiosRequestConfig): void {
+  //   this.instance.request(config).then((res) => {
+  //     console.log(res)
+  //   })
+  // }
+  // request(config: MYRequestConfig): void {
+  //   this.instance.request({ ...config, transformRequest}).then((res) => {
+  //     console.log(res)
+  //   })
+  // }
+  // 3.每个单独的请求也可以有属于自己的拦截
+  request(config: MYRequestConfig): void {
+    if (config.interceptors?.requestInterceptor) {
+      config = config.interceptors.requestInterceptor(config)
+    }
+
     this.instance.request(config).then((res) => {
+      if (config.interceptors?.responseInterceptor) {
+        res = config.interceptors.responseInterceptor(res)
+      }
       console.log(res)
     })
   }
