@@ -17,6 +17,7 @@ app.mount('#app')
 myRequest.request({
   url: '/home/multidata',
   method: 'GET',
+  showLoading: false,
   interceptors: {
     requestInterceptor: (config) => {
       console.log('单独请求config')
@@ -24,6 +25,7 @@ myRequest.request({
     },
     responseInterceptor: (res) => {
       console.log('单独响应的response')
+      // console.log(res)
       return res
     }
   }

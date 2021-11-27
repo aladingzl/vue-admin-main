@@ -7,6 +7,14 @@ const myRequest = new MYRequest({
   timeout: TIME_OUT,
   interceptors: {
     requestInterceptor: (config) => {
+      // 携带 token 的拦截
+      const token = ''
+      if (token) {
+        if (config.headers) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+      }
+
       console.log('请求拦截成功')
       return config
     },
@@ -14,9 +22,9 @@ const myRequest = new MYRequest({
       console.log('请求拦截失败')
       return err
     },
-    responseInterceptor: (config) => {
+    responseInterceptor: (res) => {
       console.log('响应拦截成功')
-      return config
+      return res
     },
     responseInterceptorCatch: (err) => {
       console.log('响应拦截失败')
