@@ -1,5 +1,9 @@
 import { createApp } from 'vue'
 import { registerApp } from './global'
+import 'normalize.css'
+import './assets/css/index.less'
+
+// import * as Icons from '@element-plus/icons'
 
 import myRequest from './service'
 import App from './App.vue'
@@ -11,7 +15,10 @@ const app = createApp(App)
 registerApp(app)
 app.use(router)
 app.use(store)
-
+// 注册Icons 全局组件
+// Object.keys(Icons).forEach((key) => {
+//   app.component(key, Icons[key])
+// })
 app.mount('#app')
 
 interface DataType {
@@ -49,7 +56,7 @@ myRequest
     showLoading: false
   })
   .then((res) => {
-    console.log(res.data)
-    console.log(res.returnCode)
-    console.log(res.success)
+    // console.log(res.data)
+    // console.log(res.returnCode)
+    // console.log(res.success)
   })
