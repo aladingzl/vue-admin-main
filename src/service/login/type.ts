@@ -12,3 +12,4 @@ export interface ILoginResult {
   name: string
   token: string
 }
+// json to ts  javaBean Moudle
