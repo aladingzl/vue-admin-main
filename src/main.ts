@@ -5,7 +5,7 @@ import './assets/css/index.less'
 
 // import * as Icons from '@element-plus/icons'
 
-import myRequest from './service'
+// import myRequest from './service'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -21,11 +21,11 @@ app.use(store)
 // })
 app.mount('#app')
 
-interface DataType {
-  data: any
-  returnCode: string
-  success: boolean
-}
+// interface DataType {
+//   data: any
+//   returnCode: string
+//   success: boolean
+// }
 
 // myRequest
 //   .request<DataType>({
@@ -50,13 +50,13 @@ interface DataType {
 //     console.log(res.success)
 //   })
 
-myRequest
-  .get<DataType>({
-    url: '/home/multidata',
-    showLoading: false
-  })
-  .then((res) => {
-    // console.log(res.data)
-    // console.log(res.returnCode)
-    // console.log(res.success)
-  })
+// myRequest
+//   .get<DataType>({
+//     url: '/home/multidata',
+//     showLoading: false
+//   })
+//   .then((res) => {
+//     console.log(res.data)
+//     console.log(res.returnCode)
+//     console.log(res.success)
+//   })

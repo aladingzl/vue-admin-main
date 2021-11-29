@@ -6,7 +6,7 @@ import { ElLoading, ILoadingInstance } from 'element-plus/lib/components'
 
 const DEAFULT_LOADING = true
 
-class HYRequest {
+class MYRequest {
   instance: AxiosInstance
   interceptors?: MYRequestInterceptors
   showLoading: boolean
@@ -130,4 +130,4 @@ class HYRequest {
   }
 }
 
-export default HYRequest
+export default MYRequest
