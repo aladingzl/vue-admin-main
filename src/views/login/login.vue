@@ -5,9 +5,10 @@
 </template>
 
 <script lang="ts">
+// login 细分组件 各个小部分处理不同的逻辑 更加清晰
 import { defineComponent } from 'vue'
 import LoginPanel from './cpns/login-panel.vue'
-
+// defineComponent
 export default defineComponent({
   components: {
     LoginPanel
