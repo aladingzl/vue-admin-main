@@ -9,12 +9,15 @@ import './assets/css/index.less'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import { setupStore } from './store'
 
 const app = createApp(App)
 
-registerApp(app)
+app.use(registerApp)
 app.use(router)
 app.use(store)
+
+setupStore()
 // 注册Icons 全局组件
 // Object.keys(Icons).forEach((key) => {
 //   app.component(key, Icons[key])

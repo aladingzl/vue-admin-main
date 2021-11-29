@@ -18,4 +18,12 @@ const store = createStore<IRootState>({
   }
 })
 
+// 在 vuex 中保存的数据，用户刷新后，数据会从内存中消失
+// 原来的逻辑是在用户发送请求后，拿到对应请求的数据通过 mutation 设置到 vuex 中
+// 利用本地 localStorage判断登录成功，在用户未点击发送请求的情况下
+// 防止用户刷新
+
+export function setupStore() {
+  store.dispatch('login/loadLocalLogin')
+}
 export default store

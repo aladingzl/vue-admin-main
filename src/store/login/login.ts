@@ -6,6 +6,8 @@ import {
 } from '@/service/login/login'
 
 import localCache from '@/utils/cache'
+import router from '@/router'
+
 import { IRootState } from '../types'
 import { ILoginState } from './types'
 import { IAccount } from '@/service/login/type'
@@ -59,6 +61,22 @@ const loginModule: Module<ILoginState, IRootState> = {
       console.log(userMenus)
 
       // 4.跳到首页
+      router.push('/main')
+    },
+    // 获取本地信息
+    loadLocalLogin({ commit }) {
+      const token = localCache.getCache('token')
+      if (token) {
+        commit('changeToken', token)
+      }
+      const userInfo = localCache.getCache('userInfo')
+      if (userInfo) {
+        commit('changeUserInfo', userInfo)
+      }
+      const UserMenus = localCache.getCache('UserMenus')
+      if (token) {
+        commit('changeUserMenus', UserMenus)
+      }
     }
     // phoneLoginAction({ commit }, payload: any) {
     //   console.log('执行phoneLoginAction', payload)
