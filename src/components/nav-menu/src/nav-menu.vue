@@ -1,12 +1,58 @@
 <template>
-  <div class="nav-menu"></div>
+  <div class="nav-menu">
+    <div class="logo">
+      <img class="img" src="~@/assets/img/logo.svg" alt="logo" />
+      <span class="title">Vue3+TS</span>
+    </div>
+
+    <el-menu default-active="2" class="el-menu-vertical">
+      <template v-for="item in userMenus" :key="item.id">
+        <!-- 二级菜单 -->
+        <template v-if="item.type === 1">
+          <!-- 二级菜单的可以展开的标题 -->
+          <el-sub-menu>
+            <template #title>
+              <i v-if="item.icon" :class="item.icon"></i>
+              <span>{{ item.name }}</span>
+            </template>
+          </el-sub-menu>
+          <!-- 遍历 item -->
+          <template v-for="subitem in item.children" :key="subitem.id">
+            <el-menu-item>
+              <i v-if="subitem.icon" :class="item.icon"></i>
+              <span>{{ subitem.name }}</span>
+            </el-menu-item>
+          </template>
+        </template>
+        <!-- 一级菜单 -->
+        <template v-else-if="item.type === 2">
+          <el-menu-item>
+            <i v-if="item.icon" :class="item.icon"></i>
+            <span>{{ item.name }}</span>
+          </el-menu-item>
+        </template>
+      </template>
+    </el-menu>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
+// import { useStore } from 'vuex'
+import { useStore } from '@/store'
+// vuex 对 ts 的支持性比较差，体现在 useStore  缺少类型检测
+// 自己封装一个 sueStore
 // vuex - typescript  => pinia
 
-export default defineComponent({})
+export default defineComponent({
+  setup() {
+    const store = useStore()
+    const userMenus = computed(() => store.state.login.userMenus)
+    return {
+      userMenus
+    }
+  }
+})
 </script>
 
 <style scoped lang="less">
