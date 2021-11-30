@@ -2,31 +2,38 @@
   <div class="nav-menu">
     <div class="logo">
       <img class="img" src="~@/assets/img/logo.svg" alt="logo" />
-      <span class="title">Vue3+TS</span>
+      <span v-if="!collapse" class="title">Vue3+TS</span>
     </div>
 
-    <el-menu default-active="2" class="el-menu-vertical">
+    <el-menu
+      default-active="2"
+      class="el-menu-vertical"
+      :collapse="collapse"
+      background-color="#0c2135"
+      text-color="#b7bdc3"
+      active-text-color="#0a60bd"
+    >
       <template v-for="item in userMenus" :key="item.id">
         <!-- 二级菜单 -->
         <template v-if="item.type === 1">
           <!-- 二级菜单的可以展开的标题 -->
-          <el-sub-menu>
+          <el-sub-menu :index="item.id + ''">
             <template #title>
               <i v-if="item.icon" :class="item.icon"></i>
               <span>{{ item.name }}</span>
             </template>
+            <!-- 遍历 item -->
+            <template v-for="subitem in item.children" :key="subitem.id">
+              <el-menu-item :index="subitem.id + ''">
+                <i v-if="subitem.icon" :class="item.icon"></i>
+                <span>{{ subitem.name }}</span>
+              </el-menu-item>
+            </template>
           </el-sub-menu>
-          <!-- 遍历 item -->
-          <template v-for="subitem in item.children" :key="subitem.id">
-            <el-menu-item>
-              <i v-if="subitem.icon" :class="item.icon"></i>
-              <span>{{ subitem.name }}</span>
-            </el-menu-item>
-          </template>
         </template>
         <!-- 一级菜单 -->
         <template v-else-if="item.type === 2">
-          <el-menu-item>
+          <el-menu-item :index="item.id + ''">
             <i v-if="item.icon" :class="item.icon"></i>
             <span>{{ item.name }}</span>
           </el-menu-item>
@@ -40,11 +47,17 @@
 import { computed, defineComponent } from 'vue'
 // import { useStore } from 'vuex'
 import { useStore } from '@/store'
-// vuex 对 ts 的支持性比较差，体现在 useStore  缺少类型检测
+// vuex 对 ts 的支持性比较差，体现在 useStore  缺少类型检测 拿到的是 any 类型
 // 自己封装一个 sueStore
 // vuex - typescript  => pinia
 
 export default defineComponent({
+  props: {
+    collaspe: {
+      type: Boolean,
+      default: false
+    }
+  },
   setup() {
     const store = useStore()
     const userMenus = computed(() => store.state.login.userMenus)
