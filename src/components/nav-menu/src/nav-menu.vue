@@ -24,7 +24,10 @@
             </template>
             <!-- 遍历 item -->
             <template v-for="subitem in item.children" :key="subitem.id">
-              <el-menu-item :index="subitem.id + ''">
+              <el-menu-item
+                :index="subitem.id + ''"
+                @click="handleMenuItemClick(subitem)"
+              >
                 <i v-if="subitem.icon" :class="item.icon"></i>
                 <span>{{ subitem.name }}</span>
               </el-menu-item>
@@ -47,6 +50,7 @@
 import { computed, defineComponent } from 'vue'
 // import { useStore } from 'vuex'
 import { useStore } from '@/store'
+import { useRouter } from 'vue-router'
 // vuex 对 ts 的支持性比较差，体现在 useStore  缺少类型检测 拿到的是 any 类型
 // 自己封装一个 sueStore
 // vuex - typescript  => pinia
@@ -60,9 +64,20 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
+    const router = useRouter()
     const userMenus = computed(() => store.state.login.userMenus)
+    // el-menu-item 监听点击
+    const handleMenuItemClick = (item: any) => {
+      console.log(item)
+
+      router.push({
+        path: item.url ?? '/not-found'
+      })
+    }
+
     return {
-      userMenus
+      userMenus,
+      handleMenuItemClick
     }
   }
 })
