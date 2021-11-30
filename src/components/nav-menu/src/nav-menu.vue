@@ -53,7 +53,7 @@ import { useStore } from '@/store'
 
 export default defineComponent({
   props: {
-    collaspe: {
+    collapse: {
       type: Boolean,
       default: false
     }
