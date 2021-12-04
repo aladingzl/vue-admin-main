@@ -14,10 +14,11 @@ import { setupStore } from './store'
 const app = createApp(App)
 
 app.use(registerApp)
-app.use(router)
+
 app.use(store)
 
 setupStore()
+app.use(router)
 // 注册Icons 全局组件
 // Object.keys(Icons).forEach((key) => {
 //   app.component(key, Icons[key])
