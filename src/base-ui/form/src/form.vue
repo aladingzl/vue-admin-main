@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue'
+import { defineComponent, PropType, ref, watch, computed } from 'vue'
 import { IFormItem } from '../types'
 /**
  * 单向数据流
@@ -148,6 +148,7 @@ export default defineComponent({
 
     // 拷贝了一份
     const formData = ref({ ...props.modelValue })
+    // const formData = computed(() => ({ ...props.modelValue }))
     watch(
       formData,
       (newValue) => {
