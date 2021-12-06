@@ -1,9 +1,16 @@
 <template>
   <div class="page-content">
-    <my-table :listData="dataList" v-bind="contentTableConfig">
+    <my-table
+      :listData="dataList"
+      :listCount="dataCount"
+      v-bind="contentTableConfig"
+      v-model:page="pageInfo"
+    >
       <!-- 1.header中的插槽 -->
       <template #headerHandler>
-        <el-button type="primary" size="medium">新建用户</el-button>
+        <el-button v-if="isCreate" type="primary" size="medium"
+          >新建用户</el-button
+        >
       </template>
       <!-- v-slot 只能添加在 <template> 上
         当被提供的内容只有默认插槽时，组件的标签才可以被当作插槽的模板来使用
@@ -31,21 +38,36 @@
       <!-- 这里不需要作用域插槽，因为用不到作用域数据 -->
       <template #handler>
         <div class="handle-btns">
-          <el-button icon="el-icon-edit" size="mini" type="text"
+          <el-button v-if="isUpdate" icon="el-icon-edit" size="mini" type="text"
             >编辑</el-button
           >
-          <el-button icon="el-icon-delete" size="mini" type="text"
+          <el-button
+            v-if="isDelete"
+            icon="el-icon-delete"
+            size="mini"
+            type="text"
             >删除</el-button
           >
         </div>
+      </template>
+      <!-- 在page-content中动态插入剩余的插槽 -->
+      <template
+        v-for="item in otherPropSlots"
+        :key="item.prop"
+        #[item.slotName]="scope"
+      >
+        <template v-if="item.slotName">
+          <slot :name="item.slotName" :row="scope.row"></slot>
+        </template>
       </template>
     </my-table>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref, watch } from 'vue'
 import { useStore } from '@/store'
+import { usePermission } from '@/hooks/use-permission'
 
 import MyTable from '@/base-ui/table'
 
@@ -65,21 +87,60 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore()
-    store.dispatch('system/getPageListAction', {
-      pageName: props.pageName,
-      queryInfo: {
-        offset: 0,
-        size: 10
-      }
-    })
 
+    // 0.获取操作的权限
+    const isCreate = usePermission(props.pageName, 'create')
+    const isUpdate = usePermission(props.pageName, 'update')
+    const isDelete = usePermission(props.pageName, 'delete')
+    const isQuery = usePermission(props.pageName, 'query')
+
+    // 1.双向绑定pageInfo
+    const pageInfo = ref({ currentPage: 0, pageSize: 10 })
+    watch(pageInfo, () => getPageData())
+
+    // 2.发送网络请求
+    const getPageData = (queryInfo: any = {}) => {
+      if (!isQuery) return
+      store.dispatch('system/getPageListAction', {
+        pageName: props.pageName,
+        queryInfo: {
+          offset: pageInfo.value.currentPage * pageInfo.value.pageSize,
+          size: pageInfo.value.pageSize,
+          ...queryInfo
+        }
+      })
+    }
+    getPageData()
+
+    // 从 vuex 中获取数据
     const dataList = computed(() =>
       store.getters[`system/pageListData`](props.pageName)
     )
+    const dataCount = computed(() =>
+      store.getters[`system/pageListCount`](props.pageName)
+    )
     // const userCount = computed(() => store.state.system.userCount)
 
+    // 4.获取其他的动态插槽名称
+    const otherPropSlots = props.contentTableConfig?.propList.filter(
+      (item: any) => {
+        if (item.slotName === 'status') return false
+        if (item.slotName === 'createAt') return false
+        if (item.slotName === 'updateAt') return false
+        if (item.slotName === 'handler') return false
+        return true
+      }
+    )
+
     return {
-      dataList
+      dataList,
+      getPageData,
+      dataCount,
+      pageInfo,
+      otherPropSlots,
+      isCreate,
+      isUpdate,
+      isDelete
     }
   }
 })

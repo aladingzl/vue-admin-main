@@ -35,8 +35,10 @@
                   :placeholder="item.placeholder"
                   v-bind="item.otherOptions"
                   :show-password="item.type === 'password'"
-                  v-model="formData[`${item.field}`]"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
                 />
+                <!-- v-model="formData[`${item.field}`]" -->
               </template>
               <!-- select -->
               <template v-else-if="item.type === 'select'">
@@ -44,8 +46,10 @@
                   :placeholder="item.placeholder"
                   v-bind="item.otherOptions"
                   style="width: 100%"
-                  v-model="formData[`${item.field}`]"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
                 >
+                  <!-- v-model="formData[`${item.field}`]" -->
                   <el-option
                     v-for="option in item.options"
                     :key="option.value"
@@ -59,8 +63,10 @@
                 <el-date-picker
                   style="width: 100%"
                   v-bind="item.otherOptions"
-                  v-model="formData[`${item.field}`]"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
                 ></el-date-picker>
+                <!-- v-model="formData[`${item.field}`]" -->
               </template>
             </el-form-item>
           </el-col>
@@ -75,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch, computed } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { IFormItem } from '../types'
 /**
  * 单向数据流
@@ -138,6 +144,10 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    const handleValueChange = (value: any, field: string) => {
+      emit('update:modelValue', { ...props.modelValue, [field]: value })
+    }
+
     // const formData = computed({
     //   get: () => props.modelValue,
     //   set: () => {
@@ -146,20 +156,21 @@ export default defineComponent({
     //   }
     // })
 
-    // 拷贝了一份
-    const formData = ref({ ...props.modelValue })
+    // 拷贝了一份 浅拷贝
+    // const formData = ref({ ...props.modelValue })
     // const formData = computed(() => ({ ...props.modelValue }))
-    watch(
-      formData,
-      (newValue) => {
-        emit('update:modelValue', newValue)
-      },
-      {
-        deep: true
-      }
-    )
+    // watch(
+    //   formData,
+    //   (newValue) => {
+    //     emit('update:modelValue', newValue)
+    //   },
+    //   {
+    //     deep: true
+    //   }
+    // )
     return {
-      formData
+      // formData
+      handleValueChange
     }
   }
 })

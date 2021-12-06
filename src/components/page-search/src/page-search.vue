@@ -1,6 +1,9 @@
 <template>
   <div class="page-search">
     <!-- v-bind 与 v-model -->
+    <!-- 单向数据流 v-model 简单数据的双向绑定 本质就是一种语法糖
+         对比 react
+    -->
     <hy-form v-bind="searchFormConfig" v-model="formData">
       <template #header>
         <h1 class="header">高级检索</h1>
@@ -10,7 +13,12 @@
           <el-button icon="el-icon-refresh" @click="handleResetClick"
             >重置</el-button
           >
-          <el-button type="primary" icon="el-icon-search">搜索</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            @click="handleQueryClick"
+            >搜索</el-button
+          >
         </div>
       </template>
     </hy-form>
@@ -31,7 +39,8 @@ export default defineComponent({
   components: {
     HyForm
   },
-  setup(props) {
+  emits: ['resetBtnClick', 'queryBtnClick'],
+  setup(props, { emit }) {
     // 用 reactive 呢
     // 双向绑定的属性应该是由配置文件的 field 来决定
     // const formData = ref({
@@ -52,14 +61,22 @@ export default defineComponent({
 
     // 2.优化二: 当用户点击重置
     const handleResetClick = () => {
-      for (const key in formOriginData) {
-        formData.value[`${key}`] = formOriginData[key]
-      }
+      // for (const key in formOriginData) {
+      //   formData.value[`${key}`] = formOriginData[key]
+      // }
+      formData.value = formOriginData
+      emit('resetBtnClick')
+    }
+
+    // 3.优化三: 当用户点击搜索
+    const handleQueryClick = () => {
+      emit('queryBtnClick', formData.value)
     }
 
     return {
       formData,
-      handleResetClick
+      handleResetClick,
+      handleQueryClick
     }
   }
 })
