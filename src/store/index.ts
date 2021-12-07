@@ -25,6 +25,7 @@ const store = createStore<IRootState>({
   },
   getters: {},
   actions: {
+    // 异步请求 某些情况 token 可能还没拿到 在哪一定能拿到
     async getInitialDataAction({ commit }) {
       // 1.请求部门和角色数据
       const departmentResult = await getPageListData('/department/list', {

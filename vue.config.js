@@ -1,5 +1,5 @@
 // const path = require('path')
-
+// 配置改完要重新编译
 module.exports = {
   // 1.配置方式一: CLI提供的属性
   outputDir: './build',

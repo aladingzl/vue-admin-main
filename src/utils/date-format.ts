@@ -9,6 +9,7 @@ export function formatUtcString(
   utcString: string,
   format: string = DATE_TIME_FORMAT
 ) {
+  // utcOffset 零时区偏移
   return dayjs.utc(utcString).utcOffset(8).format(format)
 }
 

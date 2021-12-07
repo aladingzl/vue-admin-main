@@ -26,6 +26,7 @@ const loginModule: Module<ILoginState, IRootState> = {
   },
   getters: {},
   mutations: {
+    // mutation 里不要搞异步的东西
     changeToken(state, token: string) {
       state.token = token
     },
@@ -53,7 +54,7 @@ const loginModule: Module<ILoginState, IRootState> = {
     }
   },
   actions: {
-    async accountLoginAction({ commit }, payload: IAccount) {
+    async accountLoginAction({ commit, dispatch }, payload: IAccount) {
       // console.log('执行accountLoginAction', payload)
       // 1. 实现登录逻辑
       // accountLoginRequest().then(res => {}) 这样写容易产生回调地狱 改用 async...await 考虑其用法 Promise等等
@@ -64,6 +65,8 @@ const loginModule: Module<ILoginState, IRootState> = {
       localCache.setCache('token', token)
 
       console.log(loginResult)
+      // 发送初始化的请求(完整的role/department)  调根里的 action
+      dispatch('getInitialDataAction', null, { root: true })
 
       // 2.请求用户信息
       const userInfoResult = await requestUserInfoById(id)
@@ -83,10 +86,12 @@ const loginModule: Module<ILoginState, IRootState> = {
       router.push('/main')
     },
     // 获取本地信息
-    loadLocalLogin({ commit }) {
+    loadLocalLogin({ commit, dispatch }) {
       const token = localCache.getCache('token')
       if (token) {
         commit('changeToken', token)
+        // 发送初始化的请求(完整的role/department)
+        dispatch('getInitialDataAction', null, { root: true })
       }
       const userInfo = localCache.getCache('userInfo')
       if (userInfo) {
