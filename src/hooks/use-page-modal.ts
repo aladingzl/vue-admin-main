@@ -1,4 +1,7 @@
+// hooks 下的东西是很多页面所共享的
 import { ref } from 'vue'
+// modal /ˈməʊdl/
+// model /ˈmɒd(ə)l/
 import PageModal from '@/components/page-modal'
 
 type CallbackFn = () => void
