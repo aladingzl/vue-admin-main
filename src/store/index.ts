@@ -12,7 +12,8 @@ const store = createStore<IRootState>({
       name: 'hhhh',
       age: 18,
       entireDepartment: [],
-      entireRole: []
+      entireRole: [],
+      entireMenu: []
     }
   },
   mutations: {
@@ -25,7 +26,7 @@ const store = createStore<IRootState>({
   },
   getters: {},
   actions: {
-    // 异步请求 某些情况 token 可能还没拿到 在哪一定能拿到
+    // 初始化数据请求 异步请求 某些情况 token 可能还没拿到 在哪一定能拿到
     async getInitialDataAction({ commit }) {
       // 1.请求部门和角色数据
       const departmentResult = await getPageListData('/department/list', {
@@ -57,7 +58,7 @@ const store = createStore<IRootState>({
 
 export function setupStore() {
   store.dispatch('login/loadLocalLogin')
-  store.dispatch('getInitialDataAction')
+  // store.dispatch('getInitialDataAction')
 }
 // 自己封装一个
 export function useStore(): Store<IStoreType> {

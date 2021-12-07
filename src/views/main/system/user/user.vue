@@ -10,6 +10,17 @@
 
        BFF ？ serverless ？
    -->
+
+  <!-- 目前一个配置主要包含三个部分
+       config、hook
+       1.PageSearch
+          MyForm
+       2.PageContent
+          MyTable
+       3.PageModal
+          el-dialog
+          MyForm
+   -->
   <div class="user">
     <page-search
       :searchFormConfig="searchFormConfig"
